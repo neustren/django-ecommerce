@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "localhost",
+            "database": "\\\\wsl$\\Ubuntu-20.04\\home\\neus\\dev\\django-ecommerce\\db.sqlite3"
+        }
+    ]
+}
