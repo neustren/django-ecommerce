@@ -4,6 +4,7 @@ from PIL import Image
 from django.db import models
 from django.utils.text import slugify
 # Create your models here.
+from utils import money
 
 
 class Produto(models.Model):
@@ -23,12 +24,12 @@ class Produto(models.Model):
     )
 
     def get_preco_formatado(self):
-        return f'R$ {self.preco_marketing:.2f}'.replace('.', ',')
+        return money.formata_preco(self.preco_marketing)
 
     get_preco_formatado.short_description = 'Preço'
 
     def get_preco_promocional_formatado(self):
-        return f'R$ {self.preco_marketing_promocional:.2f}'.replace('.', ',')
+        return money.formata_preco(self.preco_marketing_promocional)
 
     get_preco_promocional_formatado.short_description = 'Preço'
 
