@@ -30,9 +30,9 @@ class DetalheProduto(DetailView):
 class AdicionarAoCarrinho(View):
     def get(self, request, *args, **kwargs):
 
-        if self.request.session.get('carrinho'):
-            del self.request.session['carrinho']
-            self.request.session.save()
+        # if self.request.session.get('carrinho'):
+        #     del self.request.session['carrinho']
+        #     self.request.session.save()
 
         http_referer = self.request.META.get(
             'HTTP_REFERER', reverse('produto:lista'))
@@ -105,15 +105,43 @@ class AdicionarAoCarrinho(View):
 
 class RemoverDoCarrinho(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse('RemoverDoCarrinho')
+
+        http_referer = self.request.META.get(
+            'HTTP_REFERER', reverse('produto:lista'))
+
+        variacao_id = self.request.GET.get('vid')
+        carrinho = self.request.session.get('carrinho')
+        if not variacao_id \
+                or not carrinho \
+                or variacao_id not in carrinho:
+            return redirect(http_referer)
+
+        produto_removido = carrinho[variacao_id]
+        messages.success(self.request,
+                         f'Produto {produto_removido["produto_nome"]} {produto_removido["variacao_nome"]}'
+                         f'removido do seu carrinho.'
+                         )
+        # return HttpResponse('RemoverDoCarrinho')
+
+        del self.request.session['carrinho'][variacao_id]
+        self.request.session.save()
+        return redirect(http_referer)
 
 
 class Carrinho(View):
     def get(self, request, *args, **kwargs):
+        """
+        Poderia pegar logo no template o "request.session.carrinho"
+        """
+
+        contexto = {
+            'carrinho': self.request.session.get('carrinho', {})
+        }
+
         # return HttpResponse('Carrinho')
-        return render(self.request, 'produto/carrinho.html')
+        return render(self.request, 'produto/carrinho.html', contexto)
 
 
-class Finalizar(View):
+class ResumoDaCompra(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse('Finalizar')
+        return HttpResponse('ResumoDaCompra')
